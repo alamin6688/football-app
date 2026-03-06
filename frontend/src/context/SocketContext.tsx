@@ -32,7 +32,12 @@ export const SocketProvider = ({ children }: { children: ReactNode }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
-    const newSocket = io('http://localhost:5001');
+    // Ensuring clean handshake with websocket fallback
+    const newSocket = io('http://localhost:5001', {
+      transports: ['websocket', 'polling'],
+      reconnection: true,
+      reconnectionAttempts: 5,
+    });
     setSocket(newSocket);
 
     newSocket.on('notification', (notification: Notification) => {
